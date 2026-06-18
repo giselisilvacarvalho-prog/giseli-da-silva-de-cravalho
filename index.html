@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Projeto: GitHub - Agro Forte, Futuro Sustentável
+Módulo: Dashboard Interativo de Solo e Água
+Requisito: +100 linhas de código colorido para terminal
+"""
+
+import os
+import time
+import random
+from colorama import init, Fore, Back, Style
+
+# Inicializa o colorama
+init(autoreset=True)
+
+def limpar_tela():
+    """Limpa o terminal para dar efeito de animação."""
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def desenhar_barra_progresso(percentual, cor_barra):
+    """Desenha uma barra de preenchimento colorida baseada em uma porcentagem."""
+    largura_maxima = 20
+    blocos_preenchidos = int((percentual / 100) * largura_maxima)
+    blocos_vazios = largura_maxima - blocos_preenchidos
+    
+    barra = cor_barra + "█" * blocos_preenchidos + Fore.WHITE + "░" * blocos_vazios
+    return f"[{barra}] {percentual:.1f}%"
+
+def exibir_logo():
+    """Exibe a identidade visual do projeto em arte ASCII."""
+    print(Fore.GREEN + Style.BRIGHT + r"      _    ____ ____   ___    _____ ___  ____ _____ _____ ")
+    print(Fore.GREEN + Style.BRIGHT + r"     / \  / ___|  _ \ / _ \  |  ___/ _ \|  _ \_   _| ____|")
+    print(Fore.YELLOW + Style.BRIGHT + r"    / _ \| |  _| |_) | | | | | |_ | | | | |_) || | |  _|  ")
+    print(Fore.YELLOW + Style.BRIGHT + r"   / ___ \ |_| |  _ <| |_| | |  _|| |_| |  _ < | | | |___ ")
+    print(Fore.CYAN + Style.BRIGHT + r"  /_/   \_\____|_| \_\\___/  |_|   \___/|_| \_\|_| |_____|")
+    print(Fore.BLUE + Style.BRIGHT + "  =================== SUSTENTABILIDADE: SOLO E ÁGUA =================")
+    print("\n")
+
+def processar_dados_safra():
+    """Simula o processamento e calibração dos sensores de campo."""
+    print(Fore.WHITE + "Sincronizando com os sensores de telemetria...")
+    etapas = [
+        ("Verificando lençol freático", Fore.BLUE),
+        ("Avaliando condutividade elétrica do solo", Fore.YELLOW),
+        ("Calculando taxa de evapotranspiração", Fore.CYAN),
+        ("Consolidando métricas de carbono e biomassa", Fore.GREEN)
+    ]
+    
+    for etapa, cor in etapas:
+        print(cor + f"  > {etapa}: ", end="", flush=True)
+        for _ in range(3):
+            time.sleep(0.3)
+            print(cor + ".", end="", flush=True)
+        print(Fore.GREEN + " [OK]")
+    time.sleep(0.5)
+
+def mostrar_dashboard(dados):
+    """Renderiza os dados em formato de tabela e medidores coloridos."""
+    limpar_tela()
+    exibir_logo()
+    
+    print(Fore.WHITE + Back.MAGENTA + Style.BRIGHT + " --- STATUS ATUAL DA PROPRIEDADE AGRÍCOLA --- ")
+    print("-" * 70)
+    
+    # Seção 1: Gestão de Água
+    print(Fore.BLUE + Style.BRIGHT + "🚰 GESTÃO HÍDRICA (ÁGUA)")
+    
+    # Umidade do solo
+    cor_umi = Fore.GREEN if 45 <= dados['umidade'] <= 75 else (Fore.YELLOW if dados['umidade'] > 75 else Fore.RED)
+    print(f"  Umidade do Solo:       {desenhar_barra_progresso(dados['umidade'], cor_umi)}")
+    
+    # Nível do reservatório
+    cor_res = Fore.BLUE if dados['reservatorio'] > 30 else Fore.RED
+    print(f"  Nível do Reservatório: {desenhar_barra_progresso(dados['reservatorio'], cor_res)}")
+    
+    # Eficiência de irrigação
+    print(f"  Fluxo do Gotejamento:  {Fore.CYAN}{dados['fluxo_gotejo']} L/h por bico")
+    print(f"  Economia de Água:      {Fore.GREEN}+{dados['economia_agua']}% em relação à média da região")
+    
+    print("-" * 70)
+    
+    # Seção 2: Conservação de Solo
+    print(Fore.YELLOW + Style.BRIGHT + "🌱 CONSERVAÇÃO E NUTRIÇÃO DO SOLO")
+    
+    # Matéria orgânica
+    cor_mo = Fore.GREEN if dados['materia_organica'] >= 3.0 else Fore.YELLOW
+    print(f"  Matéria Orgânica:      {desenhar_barra_progresso(dados['materia_organica'] * 15, cor_mo)} (Real: {dados['materia_organica']}%)")
+    
+    # Cobertura de solo
+    cor_cob = Fore.GREEN if dados['cobertura_solo'] >= 70 else Fore.YELLOW
+    print(f"  Cobertura Palhada:     {desenhar_barra_progresso(dados['cobertura_solo'], cor_cob)}")
+    
+    # pH do solo informativo
+    ph = dados['ph']
+    status_ph = Fore.GREEN + "Neutro/Ideal" if 6.0 <= ph <= 6.8 else (Fore.RED + "Ácido" if ph < 6.0 else Fore.YELLOW + "Alcalino")
+    print(f"  Índice de pH da Terra: {Fore.WHITE}[{ph}] -> Status: {status_ph}")
+
+    print("-" * 70)
+    
+    # Painel de Insights Sustentáveis
+    print(Fore.GREEN + Style.BRIGHT + "💡 INSIGHT DE IA PARA O AGRICULTOR:")
+    if dados['umidade'] < 45:
+        print(Fore.RED + "  [ALERTA] Umidade baixa. Ativar irrigação por gotejamento noturno para evitar evaporação.")
+    else:
+        print(Fore.GREEN + "  [SUCESSO] Solo protegido pela palhada. Irrigação suspensa automática: economia de recursos!")
+
+def main():
+    """Loop principal para manter o painel rodando e atualizando."""
+    # Massa de dados inicial estável para o exemplo
+    dados_fazenda = {
+        'umidade': 62.5,
+        'reservatorio': 88.0,
+        'fluxo_gotejo': 1.8,
+        'economia_agua': 34.2,
+        'materia_organica': 4.2,
+        'cobertura_solo': 85.0,
+        'ph': 6.4
+    }
+    
+    limpar_tela()
+    exibir_logo()
+    processar_dados_safra()
+    
+    # Executa 2 ciclos de atualização mudando levemente os números de forma dinâmica
+    for interacao in range(2):
+        mostrar_dashboard(dados_fazenda)
+        time.sleep(4)
+        
+        # Simulando pequenas alterações climáticas/do solo para a próxima volta
+        dados_fazenda['umidade'] -= random.uniform(2.0, 5.0)
+        dados_fazenda['reservatorio'] -= random.uniform(0.5, 1.5)
+        dados_fazenda['cobertura_solo'] += random.uniform(-1.0, 2.0)
+        
+    print("\n" + Back.GREEN + Fore.BLACK + " MONITORAMENTO CONCLUÍDO COM SUCESSO ")
+    print(Fore.WHITE + "Tecnologia no campo preservando a água e alimentando o futuro do planeta.\n")
+
+if __name__ == "__main__":
+    main()
+O que torna esse código bom para o GitHub:
+Mais de 115 linhas: Cumpre folgadamente o requisito de tamanho estruturado.
+
+Uso avançado de Cores: Mistura o Fore (cor da letra), Back (cor do fundo) e Style.BRIGHT (intensidade).
+
+Gráficos em modo texto: O uso dos caracteres █ e ░ gera um efeito visual de barras de energia/carregamento muito bonito diretamente no terminal.
